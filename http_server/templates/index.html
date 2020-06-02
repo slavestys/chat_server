@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <script type="text/javascript" src="public/js/vue.js"></script>
+        <script type="text/javascript" src="public/js/axios.js"></script>
+        <script type="text/javascript" src="public/js/components/login.js"></script>
+        <script type="text/javascript" src="public/js/components/chat.js"></script>
+        <script type="text/javascript" src="public/js/main.js"></script>
+        <link rel="stylesheet" type="text/css" href="public/css/main.css">
+    </head>
+
+    <body>
+        <div id="app">
+            <login user_data="{$ current_user.json_data() $}" v-on:user-changed="set_user"></login>
+            <chat :user="user"></chat>
+            <div id="middle">
+                <div id="left"></div>
+                <div id="content"></div>
+            </div>
+        </div>
+    </body>
+</html>
