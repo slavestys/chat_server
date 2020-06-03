@@ -43,14 +43,14 @@ class ChatServerProcessor(ChatProcessorBase):
         if self.__user:
             await self.__process_auth_success(command.cmd_id)
         else:
-            await self.on_error(command.cmd_id, protocol.Error.ERR_AUTH_FAILED)
+            await self.on_error(protocol.Error.ERR_AUTH_FAILED, cmd_id=command.cmd_id)
 
     async def process_auth_by_key(self, command: protocol.AuthByKey):
         self.__user = await User.filter(id=command.user_id()).first()
         if self.__user and self.__user.key() == command.key():
             await self.__process_auth_success(command.cmd_id)
         else:
-            await self.on_error(command.cmd_id, protocol.Error.ERR_AUTH_FAILED)
+            await self.on_error(protocol.Error.ERR_AUTH_FAILED, cmd_id=command.cmd_id)
 
     async def process_chat_message(self, command: protocol.Message):
         room_id = command.room_id
