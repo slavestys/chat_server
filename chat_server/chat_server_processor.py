@@ -2,6 +2,7 @@ from aiohttp import web
 from typing import List
 import datetime
 from typing import Union
+import tortoise
 
 from models import User, Message, Room, UserRoom
 from chat_common import protocol
@@ -92,8 +93,7 @@ class ChatServerProcessor(ChatProcessorBase):
             await self.on_error(protocol.Error.ERR_ROOM_NOT_FOUND, cmd_id=command.cmd_id)
             return
         await self.__user.rooms.add(room)
-        self.__user_rooms.append(room_id)
-        await self.__chat_state.join_to_rooms(self, room_id)
+        await self._on_join_to_room(room_id)
         await self.send_success(command.cmd_id)
 
     async def process_room_leave(self, command: protocol.RoomLeave):
@@ -105,6 +105,14 @@ class ChatServerProcessor(ChatProcessorBase):
         self.__user_rooms.remove(room_id)
         await self.__chat_state.leave_from_rooms(self, room_id)
         await self.send_success(command.cmd_id)
+
+    async def process_room_create(self, command: protocol.RoomCreate):
+        room_name = command.name
+        async with tortoise.transactions.in_transaction():
+            room = await Room.create(name=room_name)
+            await self.__user.rooms.add(room)
+            await self._on_join_to_room(room.id)
+            await self.send_success(command.cmd_id, room_id=room.id)
 
     async def on_error(self, error_code: int, error_message: Union[str, Exception] = None, cmd_id: int = None):
         return await self.send_message(protocol.Error.make(self, error_code, error_message=error_message, cmd_id=cmd_id).serialize())
@@ -126,4 +134,9 @@ class ChatServerProcessor(ChatProcessorBase):
 
     def authenticated(self):
         return self.__user is not None
+
+    def _on_join_to_room(self, room_id):
+        self.__user_rooms.append(room_id)
+        return self.__chat_state.join_to_rooms(self, room_id)
+
 
