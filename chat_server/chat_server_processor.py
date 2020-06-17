@@ -217,7 +217,6 @@ class ChatServerProcessor(ChatProcessorBase):
         return self.__user is not None
 
     def _on_join_to_room(self, room_id):
-        self.__user_rooms.append(room_id)
         return self.__chat_state.join_to_rooms(self, room_id)
 
     async def _on_message_saved(self, message: Message, cmd_id: int):
