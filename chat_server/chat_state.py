@@ -54,7 +54,7 @@ class ChatState:
 
     async def online(self, sender: ChatServerProcessor):
         self.add_authorized(sender)
-        self.add_to_rooms(sender, *sender.room_ids)
+        self.add_to_rooms(sender, *sender.room_ids, force=True)
         message = SystemMessage.make(sender, SystemMessage.USER_ONLINE, user_id=sender.user_id, user_name=sender.user_name).serialize()
         awaitables = [chat_server_processor.send_message(message) for chat_server_processor in self.all_chat_users(sender, *sender.room_ids)]
         if not awaitables:
@@ -89,9 +89,9 @@ class ChatState:
             if awaitables:
                 await asyncio.wait(awaitables)
 
-    def add_to_rooms(self, chat_server_processor: ChatServerProcessor, *room_ids: int):
+    def add_to_rooms(self, chat_server_processor: ChatServerProcessor, *room_ids: int, force=False):
         for room_id in room_ids:
-            if chat_server_processor.add_to_room(room_id):
+            if force or chat_server_processor.add_to_room(room_id):
                 self.__room_clients.setdefault(room_id, []).append(chat_server_processor)
 
     def remove_from_rooms(self, chat_server_processor: ChatServerProcessor, *room_ids: int):

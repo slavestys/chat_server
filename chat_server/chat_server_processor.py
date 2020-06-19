@@ -3,6 +3,7 @@ from typing import List
 import datetime
 from typing import Union
 import tortoise
+from tortoise.query_utils import Q
 
 from models import User, Message, Room, UserRoom, Contact
 from chat_common import protocol
@@ -55,7 +56,7 @@ class ChatServerProcessor(ChatProcessorBase):
         )
 
     async def process_auth(self, command: protocol.Auth):
-        self.__user = await User.filter(name=command.login(), passwd=command.passwd()).first()
+        self.__user = await User.filter(login=command.login(), passwd=command.passwd()).first()
         if self.__user:
             await self.__process_auth_success(command.cmd_id)
         else:
@@ -181,7 +182,7 @@ class ChatServerProcessor(ChatProcessorBase):
 
     async def process_search_users(self, command: protocol.UsersSearch):
         name = command.name
-        users = await User.filter(name__icontains=name).all()
+        users = await User.filter(Q(name__icontains=name, login__icontains=name, join_type='OR')).all()
         user_data = [user.chat_client_data() for user in users]
         await self.send_success(command.cmd_id, users=user_data)
 
