@@ -16,7 +16,7 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade(engine_name=None):
     op.create_table(
         'users_rooms',
         sa.Column('user_id', sa.Integer, sa.ForeignKey('users.id')),
@@ -25,5 +25,5 @@ def upgrade():
     op.create_index('users_rooms_index', 'users_rooms', ['user_id', 'room_id'], unique=True)
 
 
-def downgrade():
+def downgrade(engine_name=None):
     op.drop_table('users_rooms')

@@ -16,7 +16,7 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade(engine_name=None):
     op.create_table(
         'users',
         sa.Column('id', sa.Integer, primary_key=True),
@@ -24,5 +24,5 @@ def upgrade():
         sa.Column('passwd', sa.String(50), nullable=False)
     )
 
-def downgrade():
+def downgrade(engine_name=None):
     op.drop_table('users')

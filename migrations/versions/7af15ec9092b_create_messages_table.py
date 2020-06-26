@@ -16,7 +16,7 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade(engine_name=None):
     op.create_table(
         'messages',
         sa.Column('id', sa.Integer, primary_key=True),
@@ -28,5 +28,5 @@ def upgrade():
     op.create_index('messages_user_id_room_id_created_at_index', 'messages', ['user_id', 'room_id', 'created_at'])
 
 
-def downgrade():
+def downgrade(engine_name=None):
     op.drop_table('messages')

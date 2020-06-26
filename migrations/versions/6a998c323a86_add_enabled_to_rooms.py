@@ -16,9 +16,9 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade(engine_name=None):
     op.add_column('rooms', sa.Column('room_enabled', sa.BOOLEAN, server_default='True', nullable=False))
 
 
-def downgrade():
+def downgrade(engine_name=None):
     op.drop_column('rooms', 'room_enabled')

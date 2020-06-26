@@ -20,5 +20,9 @@ class Chat:
         await chat_server_processor.loop()
         print('Client disconnected')
 
+    @property
+    def state(self):
+        return self.__state
+
     async def shutdown(self, _app):
         await Tortoise.close_connections()

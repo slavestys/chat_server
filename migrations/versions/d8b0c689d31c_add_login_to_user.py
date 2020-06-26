@@ -16,10 +16,10 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade(engine_name=None):
     op.add_column('users', sa.Column('login', sa.String(50), nullable=False))
     op.create_index('users_login_index', 'users', ['login'], unique=True)
 
 
-def downgrade():
+def downgrade(engine_name=None):
     op.drop_column('users', 'login')

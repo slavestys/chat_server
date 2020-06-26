@@ -23,7 +23,7 @@ class ChatServerProcessor(ChatProcessorBase):
         await self.__chat_state.offline(self)
 
     async def __process_auth_success(self, cmd_id):
-        self.__state = self.STATE_AUTHENTICATED
+        self._state = self.STATE_AUTHENTICATED
         rooms = await self.__user.rooms.all()
         self.__user_rooms = [room.id for room in rooms]
         rooms_client_data = []
@@ -92,7 +92,7 @@ class ChatServerProcessor(ChatProcessorBase):
             return
         message.message = command.message
         await message.save()
-        await self.__chat_state.send_message_edited(message, self, message.room_id)
+        await self.__chat_state.send_message_edited(message, self)
         await self.send_success(command.cmd_id)
 
     async def process_room_join(self, command: protocol.RoomJoin):

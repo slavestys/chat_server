@@ -17,6 +17,18 @@ class ChatState:
         self.__room_clients = {}
         self.__unauthorized = []
 
+    @property
+    def clients(self):
+        return self.__clients
+
+    @property
+    def room_clients(self):
+        return self.__room_clients
+
+    @property
+    def unauthorized(self):
+        return self.__unauthorized
+
     def all_chat_users(self, sender: ChatServerProcessor, *room_ids: int) -> Set[ChatServerProcessor]:
         chat_users = set()
         for room_id in room_ids:
