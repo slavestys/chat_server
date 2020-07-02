@@ -47,7 +47,7 @@ class ChatServerProcessor(ChatProcessorBase):
         await self.send_message(
             protocol.AuthSuccess.make(
                 self,
-                user=self.__user,
+                user_client_data=self.__user.chat_client_data(),
                 rooms_client_data=rooms_client_data,
                 users=users_data,
                 contacts=contacts_data,
