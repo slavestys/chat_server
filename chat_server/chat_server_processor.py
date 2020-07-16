@@ -69,7 +69,7 @@ class ChatServerProcessor(ChatProcessorBase):
         else:
             await self.on_error(protocol.Error.ERR_AUTH_FAILED, cmd_id=command.cmd_id)
 
-    async def process_chat_message(self, command: protocol.Message):
+    async def process_chat_message(self, command: protocol.MessageCreate):
         room_id = command.room_id
         if room_id not in self.__user_rooms:
             await self.on_error(protocol.Error.ERR_USER_NOT_IN_ROOM, cmd_id=command.cmd_id)

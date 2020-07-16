@@ -3,7 +3,7 @@ import json
 import asyncio
 
 from .chat_server_processor import ChatServerProcessor
-from chat_common.protocol import SystemMessage, Message, MessageEdit, MessageInfo
+from chat_common.protocol import SystemMessage, MessageCreate, MessageEdit, MessageInfo
 import models
 
 

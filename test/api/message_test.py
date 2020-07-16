@@ -37,7 +37,7 @@ async def test_message_send_success(chat_server: TestChatServer, chat_client_fix
     response = await chat_client_fixture.recv_message()
     assert response['message'] == 'user online'
 
-    command = protocol.Message.make(None, room.id, 'Test message')
+    command = protocol.MessageCreate.make(None, room.id, 'Test message')
     command.cmd_id = 2
     await chat_client_fixture.send_message(command.data)
     response = await chat_client_fixture.recv_message()
@@ -77,7 +77,7 @@ async def test_message_send_error_not_authenticated(chat_server: TestChatServer,
     room = await models.Room.create(name="test_room1", room_type=protocol.Room.TYPE_CHAT)
     user = await models.User.create(name='test1', login='test1', passwd='1')
 
-    command = protocol.Message.make(None, room.id, 'Test message')
+    command = protocol.MessageCreate.make(None, room.id, 'Test message')
     command.cmd_id = 1
     await chat_client_fixture.send_message(command.data)
     response = await chat_client_fixture.recv_message()
@@ -96,7 +96,7 @@ async def test_message_send_error_not_in_room(chat_server: TestChatServer, chat_
     response = await chat_client_fixture.recv_message()
     assert response['message'] == 'auth success'
 
-    command = protocol.Message.make(None, room.id, 'Test message')
+    command = protocol.MessageCreate.make(None, room.id, 'Test message')
     command.cmd_id = 2
     await chat_client_fixture.send_message(command.data)
     response = await chat_client_fixture.recv_message()
@@ -116,7 +116,7 @@ async def test_message_send_error_message_blank(chat_server: TestChatServer, cha
     response = await chat_client_fixture.recv_message()
     assert response['message'] == 'auth success'
 
-    command = protocol.Message.make(None, room.id, '')
+    command = protocol.MessageCreate.make(None, room.id, '')
     command.cmd_id = 1
     await chat_client_fixture.send_message(command.data)
     response = await chat_client_fixture.recv_message()
