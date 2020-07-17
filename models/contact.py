@@ -4,6 +4,8 @@ from tortoise.models import Model
 from tortoise import fields, queryset
 from tortoise.query_utils import Q
 
+from chat_common import protocol
+
 class Contact(Model):
     id = fields.IntField(pk=True)
     user1_id = fields.IntField()
@@ -25,8 +27,9 @@ class Contact(Model):
         return query_set.all()
 
     def client_data(self, current_user_id: int):
-        return {
-            'id': self.id,
-            'user_id': self.user1_id if current_user_id == self.user2_id else self.user2_id,
-            'enabled': self.contact_enabled
-        }
+        contact_protocol = protocol.Contact(
+            id=self.id,
+            user_id=self.user1_id if current_user_id == self.user2_id else self.user2_id,
+            enabled=bool(self.contact_enabled)
+        )
+        return contact_protocol.to_dict()
