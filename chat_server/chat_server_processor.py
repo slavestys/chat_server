@@ -34,7 +34,7 @@ class ChatServerProcessor(ChatProcessorBase):
             for message in messages:
                 messages_client_data.append(message.client_data())
                 users_to_search.add(message.user_id)
-            rooms_client_data.append({**room.client_data(), 'messages': messages_client_data})
+            rooms_client_data.append(room.client_data(messages_client_data))
         contacts = await Contact.find_contacts(self.user_id)
         contacts_data = []
         for contact in contacts:

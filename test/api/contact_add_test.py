@@ -45,7 +45,7 @@ async def test_contact_add_success(chat_server: TestChatServer, chat_client_fixt
         'contact_id': contact.id,
         'message': 'ok',
         'message_id': protocol.SystemMessage.COMMAND_SUCCESS,
-        'room': {'enabled': True, 'id': room.id, 'name': room.name, 'type': protocol.Room.TYPE_USER},
+        'room': {'enabled': True, 'id': room.id, 'name': room.name, 'type': protocol.Room.TYPE_USER, 'messages': []},
         'user': {'id': prepare_data.friend.id, 'login': prepare_data.friend.login, 'name': prepare_data.friend.name}
     }
 
@@ -55,7 +55,7 @@ async def test_contact_add_success(chat_server: TestChatServer, chat_client_fixt
         'contact_id': contact.id,
         'message': 'added_contact',
         'message_id': protocol.SystemMessage.ADDED_CONTACT,
-        'room': {'enabled': True, 'id': room.id, 'name': room.name, 'type': protocol.Room.TYPE_USER},
+        'room': {'enabled': True, 'id': room.id, 'name': room.name, 'type': protocol.Room.TYPE_USER, 'messages': []},
         'user': {'id': prepare_data.user.id, 'login': prepare_data.user.login, 'name': prepare_data.user.name}
     }
 
@@ -105,7 +105,7 @@ async def test_contact_add_success(chat_server: TestChatServer, chat_client_fixt
         'contact_id': contact.id,
         'message': 'ok',
         'message_id': protocol.SystemMessage.COMMAND_SUCCESS,
-        'room': {'enabled': True, 'id': room.id, 'name': room.name, 'type': protocol.Room.TYPE_USER},
+        'room': {'enabled': True, 'id': room.id, 'name': room.name, 'type': protocol.Room.TYPE_USER, 'messages': []},
         'user': {'id': prepare_data.friend.id, 'login': prepare_data.friend.login, 'name': prepare_data.friend.name}
     }
 
