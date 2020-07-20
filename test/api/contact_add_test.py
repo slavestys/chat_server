@@ -8,11 +8,13 @@ from test.utils import TestChatServer, TestChatClient
 
 PreparedData = namedtuple('PreparedData', 'user friend')
 
+
 @pytest.fixture(scope='function')
 async def prepare_data():
     user = await models.User.create(name='test1', login='test1', passwd='1')
     friend = await models.User.create(name='test2', login='test2', passwd='1')
     return PreparedData(user, friend)
+
 
 async def test_contact_add_success(chat_server: TestChatServer, chat_client_fixture: TestChatClient, prepare_data: PreparedData):
     friend_client = TestChatClient(chat_server.test_server)
@@ -46,7 +48,7 @@ async def test_contact_add_success(chat_server: TestChatServer, chat_client_fixt
         'message': 'ok',
         'message_id': protocol.SystemMessage.COMMAND_SUCCESS,
         'room': {'enabled': True, 'id': room.id, 'name': room.name, 'type': protocol.Room.TYPE_USER, 'messages': []},
-        'user': {'id': prepare_data.friend.id, 'login': prepare_data.friend.login, 'name': prepare_data.friend.name}
+        'user': {'id': prepare_data.friend.id, 'login': prepare_data.friend.login, 'name': prepare_data.friend.name, 'online': False}
     }
 
     response = await friend_client.recv_message()
@@ -56,7 +58,7 @@ async def test_contact_add_success(chat_server: TestChatServer, chat_client_fixt
         'message': 'added_contact',
         'message_id': protocol.SystemMessage.ADDED_CONTACT,
         'room': {'enabled': True, 'id': room.id, 'name': room.name, 'type': protocol.Room.TYPE_USER, 'messages': []},
-        'user': {'id': prepare_data.user.id, 'login': prepare_data.user.login, 'name': prepare_data.user.name}
+        'user': {'id': prepare_data.user.id, 'login': prepare_data.user.login, 'name': prepare_data.user.name, 'online': False}
     }
 
     command = protocol.ContactAdd.make(None, prepare_data.friend.id)
@@ -106,9 +108,8 @@ async def test_contact_add_success(chat_server: TestChatServer, chat_client_fixt
         'message': 'ok',
         'message_id': protocol.SystemMessage.COMMAND_SUCCESS,
         'room': {'enabled': True, 'id': room.id, 'name': room.name, 'type': protocol.Room.TYPE_USER, 'messages': []},
-        'user': {'id': prepare_data.friend.id, 'login': prepare_data.friend.login, 'name': prepare_data.friend.name}
+        'user': {'id': prepare_data.friend.id, 'login': prepare_data.friend.login, 'name': prepare_data.friend.name, 'online': False}
     }
-
 
 
 async def test_contact_add_error_not_authenticated(chat_server: TestChatServer, chat_client_fixture: TestChatClient, prepare_data: PreparedData):

@@ -5,6 +5,7 @@ import base64
 import json
 
 import config
+from chat_common import protocol
 
 class User(Model):
     id = fields.IntField(pk=True)
@@ -22,11 +23,13 @@ class User(Model):
         key.update(self.passwd.encode('utf-8'))
         return base64.b16encode(key.digest()).decode('utf-8')
 
-    def client_data(self) -> dict:
-        return {'id': self.id, 'name': self.name, 'login': self.login, 'key': self.key()}
+    def client_data(self) -> protocol.User:
+        user_protocol = protocol.User(id=self.id, name=self.name, login=self.login, key=self.key())
+        return user_protocol
 
-    def chat_client_data(self) -> dict:
-        return {'id': self.id, 'name': self.name, 'login': self.login}
+    def chat_client_data(self) -> protocol.User:
+        user_protocol = protocol.User(id=self.id, name=self.name, login=self.login)
+        return user_protocol
 
     def json_data(self) -> str:
         return json.dumps(self.client_data())

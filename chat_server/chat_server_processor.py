@@ -42,14 +42,15 @@ class ChatServerProcessor(ChatProcessorBase):
             users_to_search.add(contact.user2_id)
             contacts_data.append(contact.client_data(self.user_id))
         users = await User.filter(id__in=users_to_search).all()
-        users_data = [user.chat_client_data() for user in users]
+        users_protocol = [user.chat_client_data() for user in users]
+        self.__chat_state.set_online_flag(users_protocol)
         await self.__chat_state.online(self)
         await self.send_message(
             protocol.AuthSuccess.make(
                 self,
-                user_client_data=self.__user.chat_client_data(),
+                user_client_data=self.__user.chat_client_data().to_dict(),
                 rooms_client_data=rooms_client_data,
-                users=users_data,
+                users=[user_protocol.to_dict_friend() for user_protocol in users_protocol],
                 contacts=contacts_data,
                 cmd_id=cmd_id
             ).serialize()
@@ -156,7 +157,7 @@ class ChatServerProcessor(ChatProcessorBase):
                 await UserRoom.create(user_id=user_id, room_id=room.id)
         await self.__chat_state.added_contact(self, receiver_id=self.user_id, contact_id=contact.id, user=user, room=room)
         await self.__chat_state.added_contact(self, receiver_id=user_id, contact_id=contact.id, user=self.user, room=room)
-        await self.send_success(command.cmd_id, contact_id=contact.id, user=user.chat_client_data(), room=room.client_data())
+        await self.send_success(command.cmd_id, contact_id=contact.id, user=user.chat_client_data().to_dict_friend(), room=room.client_data())
 
     async def process_contact_remove(self, command: protocol.ContactRemove):
         user_id = command.user_id
@@ -183,7 +184,7 @@ class ChatServerProcessor(ChatProcessorBase):
     async def process_search_users(self, command: protocol.UsersSearch):
         name = command.name
         users = await User.filter(Q(name__icontains=name, login__icontains=name, join_type='OR')).all()
-        user_data = [user.chat_client_data() for user in users]
+        user_data = [user.chat_client_data().to_dict_friend() for user in users]
         await self.send_success(command.cmd_id, users=user_data)
 
     async def on_error(self, error_code: int, error_message: Union[str, Exception] = None, cmd_id: int = None):

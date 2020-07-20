@@ -43,3 +43,9 @@ async def chat_client_fixture(chat_server: TestChatServer):
         yield client
 
 
+@pytest.fixture(scope='function')
+async def friend_client(chat_server: TestChatServer):
+    async with TestChatClient(chat_server.test_server) as client:
+        yield client
+
+

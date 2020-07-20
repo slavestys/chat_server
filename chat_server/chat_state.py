@@ -3,7 +3,8 @@ import json
 import asyncio
 
 from .chat_server_processor import ChatServerProcessor
-from chat_common.protocol import SystemMessage, MessageCreate, MessageEdit, MessageInfo
+from chat_common.protocol import SystemMessage
+from chat_common import protocol
 import models
 
 
@@ -117,7 +118,7 @@ class ChatState:
         users = self.all_chat_users(sender, message.room_id)
         if not users:
             return
-        response = MessageInfo.make(sender, message.room_id, message.client_data()).serialize()
+        response = protocol.MessageInfo.make(sender, message.room_id, message.client_data()).serialize()
         awaitables = [chat_server_processor.send_message(response) for chat_server_processor in users]
         await asyncio.wait(awaitables)
 
@@ -144,7 +145,12 @@ class ChatState:
             return
         for user_processor in user_processors:
             self.add_to_rooms(user_processor, room.id)
-        response = self._make_system_message(current, SystemMessage.ADDED_CONTACT, contact_id=contact_id, user=user.chat_client_data(), room=room.client_data())
+        response = self._make_system_message(
+            current, SystemMessage.ADDED_CONTACT,
+            contact_id=contact_id,
+            user=user.chat_client_data().to_dict_friend(),
+            room=room.client_data()
+        )
         await self._send_message(user_processors, response, current)
 
     async def removed_contact(self, current: ChatServerProcessor, receiver_id: int, contact_id: int, room_id: int):
@@ -163,5 +169,7 @@ class ChatState:
             return
         await asyncio.wait(awaitables)
 
-
-
+    def set_online_flag(self, users: List[protocol.User]):
+        for user in users:
+            if user.id in self.__clients:
+                user.online = True

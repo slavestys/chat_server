@@ -6,15 +6,6 @@ import models
 from test.utils import TestChatServer, TestChatClient
 
 
-@pytest.fixture(scope='function')
-async def friend_client(chat_server: TestChatServer):
-    client = TestChatClient(chat_server.test_server)
-    task = asyncio.create_task(client.connect())
-    await client.wait_connection()
-    yield client
-    task.cancel()
-
-
 async def test_message_send_success(chat_server: TestChatServer, chat_client_fixture: TestChatClient, friend_client: TestChatClient):
     room = await models.Room.create(name="test_room1", room_type=protocol.Room.TYPE_CHAT)
     user = await models.User.create(name='test1', login='test1', passwd='1')
